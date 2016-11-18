@@ -13,10 +13,10 @@
 #define  DOC_MOD  "Python wrapper for OpenGL."
 
 #if PY_MAJOR_VERSION >= 3
-	#define IS_PY3K
-	#define RETURNNULL return NULL
+    #define IS_PY3K
+    #define RETURNNULL return NULL
 #else
-	#define RETURNNULL return
+    #define RETURNNULL return
 #endif
 
 // ****************************************************************************
@@ -214,127 +214,127 @@ static PyObject * PyGLu_Perspective ( PyObject * self, PyObject * pyoArgs );
 static PyObject * PyGLu_LookAt      ( PyObject * self, PyObject * pyoArgs );
 
 static PyMethodDef PyGL_methods[] = {
-	{ "glewInit",  PyGL_glewInit, METH_NOARGS, "" },
+    { "glewInit",  PyGL_glewInit, METH_NOARGS, "" },
 
 // management functions
-	{ "Enable",    PyGL_Enable,    METH_O,       "" },
-	{ "Disable",   PyGL_Disable,   METH_O,       "" },
-	{ "IsEnabled", PyGL_IsEnabled, METH_O,       "" },
-	{ "Hint",      PyGL_Hint,      METH_VARARGS, "" },
-	{ "BlendFunc", PyGL_BlendFunc, METH_VARARGS,
-	"BlendFunc(srcfactor, destfactor)" },
-	{ "GetString", PyGL_GetString, METH_O,       "" },
+    { "Enable",    PyGL_Enable,    METH_O,       "" },
+    { "Disable",   PyGL_Disable,   METH_O,       "" },
+    { "IsEnabled", PyGL_IsEnabled, METH_O,       "" },
+    { "Hint",      PyGL_Hint,      METH_VARARGS, "" },
+    { "BlendFunc", PyGL_BlendFunc, METH_VARARGS,
+    "BlendFunc(srcfactor, destfactor)" },
+    { "GetString", PyGL_GetString, METH_O,       "" },
 
 // matrix functions
-	{ "PushMatrix",   PyGL_PushMatrix,   METH_NOARGS,  "" },
-	{ "PopMatrix",    PyGL_PopMatrix,    METH_NOARGS,  "" },
-	{ "MatrixMode",   PyGL_MatrixMode,   METH_O,       "" },
-	{ "LoadIdentity", PyGL_LoadIdentity, METH_NOARGS,  "" },
+    { "PushMatrix",   PyGL_PushMatrix,   METH_NOARGS,  "" },
+    { "PopMatrix",    PyGL_PopMatrix,    METH_NOARGS,  "" },
+    { "MatrixMode",   PyGL_MatrixMode,   METH_O,       "" },
+    { "LoadIdentity", PyGL_LoadIdentity, METH_NOARGS,  "" },
 /*
-	{ "LoadMatrixd",  PyGL_LoadMatrixd,  METH_VARARGS, "" },
-	{ "LoadMatrixf",  PyGL_LoadMatrixf,  METH_VARARGS, "" },
-	{ "MultMatrixd",  PyGL_MultMatrixd,  METH_VARARGS, "" },
-	{ "MultMatrixf",  PyGL_MultMatrixf,  METH_VARARGS, "" },
+    { "LoadMatrixd",  PyGL_LoadMatrixd,  METH_VARARGS, "" },
+    { "LoadMatrixf",  PyGL_LoadMatrixf,  METH_VARARGS, "" },
+    { "MultMatrixd",  PyGL_MultMatrixd,  METH_VARARGS, "" },
+    { "MultMatrixf",  PyGL_MultMatrixf,  METH_VARARGS, "" },
 */
-	{ "Flush",        PyGL_Flush,        METH_NOARGS,  "" },
-	{ "Finish",       PyGL_Finish,       METH_NOARGS,  "" },
+    { "Flush",        PyGL_Flush,        METH_NOARGS,  "" },
+    { "Finish",       PyGL_Finish,       METH_NOARGS,  "" },
 // camera functions
-	{ "Viewport",   PyGL_Viewport,   METH_VARARGS, "" },
-	{ "Ortho",      PyGL_Ortho,      METH_VARARGS, "" },
-	{ "Frustum",    PyGL_Frustum,    METH_VARARGS, "" },
-	{ "DepthRange", PyGL_DepthRange, METH_VARARGS, "" },
+    { "Viewport",   PyGL_Viewport,   METH_VARARGS, "" },
+    { "Ortho",      PyGL_Ortho,      METH_VARARGS, "" },
+    { "Frustum",    PyGL_Frustum,    METH_VARARGS, "" },
+    { "DepthRange", PyGL_DepthRange, METH_VARARGS, "" },
 // buffers
-	{ "Clear",          PyGL_Clear,          METH_O,       "" },
-	{ "ClearColor",     PyGL_ClearColor,     METH_VARARGS, "" },
-	{ "ClearDepth",     PyGL_ClearDepth,     METH_O,       "" },
+    { "Clear",          PyGL_Clear,          METH_O,       "" },
+    { "ClearColor",     PyGL_ClearColor,     METH_VARARGS, "" },
+    { "ClearDepth",     PyGL_ClearDepth,     METH_O,       "" },
 // call list functions
-	{ "GenLists",    PyGL_GenLists,    METH_O,       "" },
-	{ "NewList",     PyGL_NewList,     METH_VARARGS, "" },
-	{ "EndList",     PyGL_EndList,     METH_NOARGS,  "" },
-	{ "CallList",    PyGL_CallList,    METH_O,       "" },
-	{ "IsList",      PyGL_IsList,      METH_O,       "" },
-	{ "DeleteLists", PyGL_DeleteLists, METH_VARARGS, "" },
+    { "GenLists",    PyGL_GenLists,    METH_O,       "" },
+    { "NewList",     PyGL_NewList,     METH_VARARGS, "" },
+    { "EndList",     PyGL_EndList,     METH_NOARGS,  "" },
+    { "CallList",    PyGL_CallList,    METH_O,       "" },
+    { "IsList",      PyGL_IsList,      METH_O,       "" },
+    { "DeleteLists", PyGL_DeleteLists, METH_VARARGS, "" },
 // drawing functions
-	{ "Begin",       PyGL_Begin,       METH_O,       "" },
-	{ "End",         PyGL_End,         METH_NOARGS,  "" },
-	{ "PointSize",   PyGL_PointSize,   METH_O,       "" },
-	{ "LineWidth",   PyGL_LineWidth,   METH_O,       "" },
+    { "Begin",       PyGL_Begin,       METH_O,       "" },
+    { "End",         PyGL_End,         METH_NOARGS,  "" },
+    { "PointSize",   PyGL_PointSize,   METH_O,       "" },
+    { "LineWidth",   PyGL_LineWidth,   METH_O,       "" },
 // vertex functions
-	{ "Vertex2f", PyGL_Vertex2f, METH_VARARGS, "" },
-	{ "Vertex3d", PyGL_Vertex3d, METH_VARARGS, "" },
-	{ "Vertex3f", PyGL_Vertex3f, METH_VARARGS, "" },
+    { "Vertex2f", PyGL_Vertex2f, METH_VARARGS, "" },
+    { "Vertex3d", PyGL_Vertex3d, METH_VARARGS, "" },
+    { "Vertex3f", PyGL_Vertex3f, METH_VARARGS, "" },
 // normals
-	{ "Normal3f", PyGL_Normal3f, METH_VARARGS, "" },
+    { "Normal3f", PyGL_Normal3f, METH_VARARGS, "" },
 
 // ???
-	{ "PolygonMode", PyGL_PolygonMode, METH_VARARGS, "" },
-	{ "FrontFace",   PyGL_FrontFace,   METH_O,       "" },
-	{ "CullFace",    PyGL_CullFace,    METH_O,       "" },
-	{ "EdgeFlag",    PyGL_EdgeFlag,    METH_O,       "" },
+    { "PolygonMode", PyGL_PolygonMode, METH_VARARGS, "" },
+    { "FrontFace",   PyGL_FrontFace,   METH_O,       "" },
+    { "CullFace",    PyGL_CullFace,    METH_O,       "" },
+    { "EdgeFlag",    PyGL_EdgeFlag,    METH_O,       "" },
 // transforms
-	{ "Rotated",    PyGL_Rotated,    METH_VARARGS, "" },
-	{ "Rotatef",    PyGL_Rotatef,    METH_VARARGS, "" },
-	{ "Translated", PyGL_Translated, METH_VARARGS, "" },
-	{ "Translatef", PyGL_Translatef, METH_VARARGS, "" },
-	{ "Scaled",     PyGL_Scaled,     METH_VARARGS, "" },
-	{ "Scalef",     PyGL_Scalef,     METH_VARARGS, "" },
+    { "Rotated",    PyGL_Rotated,    METH_VARARGS, "" },
+    { "Rotatef",    PyGL_Rotatef,    METH_VARARGS, "" },
+    { "Translated", PyGL_Translated, METH_VARARGS, "" },
+    { "Translatef", PyGL_Translatef, METH_VARARGS, "" },
+    { "Scaled",     PyGL_Scaled,     METH_VARARGS, "" },
+    { "Scalef",     PyGL_Scalef,     METH_VARARGS, "" },
 // shape functions
-	{ "Rectd", PyGL_Rectd, METH_VARARGS, "" },
-	{ "Rectf", PyGL_Rectf, METH_VARARGS, "" },
+    { "Rectd", PyGL_Rectd, METH_VARARGS, "" },
+    { "Rectf", PyGL_Rectf, METH_VARARGS, "" },
 // color functions
-	{ "Color3d",    PyGL_Color3d,    METH_VARARGS, "" },
-	{ "Color3f",    PyGL_Color3f,    METH_VARARGS, "" },
-	{ "Color4f",    PyGL_Color4f,    METH_VARARGS, "" },
-	{ "ShadeModel", PyGL_ShadeModel, METH_O,       "" },
+    { "Color3d",    PyGL_Color3d,    METH_VARARGS, "" },
+    { "Color3f",    PyGL_Color3f,    METH_VARARGS, "" },
+    { "Color4f",    PyGL_Color4f,    METH_VARARGS, "" },
+    { "ShadeModel", PyGL_ShadeModel, METH_O,       "" },
 // lighting functions
-	{ "Lighti",  PyGL_Lighti,  METH_VARARGS, "" },
-	{ "Lightf",  PyGL_Lightf,  METH_VARARGS, "" },
-	{ "Lightiv", PyGL_Lightiv, METH_VARARGS, "" },
-	{ "Lightfv", PyGL_Lightfv, METH_VARARGS, "" },
+    { "Lighti",  PyGL_Lighti,  METH_VARARGS, "" },
+    { "Lightf",  PyGL_Lightf,  METH_VARARGS, "" },
+    { "Lightiv", PyGL_Lightiv, METH_VARARGS, "" },
+    { "Lightfv", PyGL_Lightfv, METH_VARARGS, "" },
 // material functions
-	{ "Materiali",  PyGL_Materiali,  METH_VARARGS, "" },
-	{ "Materialf",  PyGL_Materialf,  METH_VARARGS, "" },
-	{ "Materialiv", PyGL_Materialiv, METH_VARARGS, "" },
-	{ "Materialfv", PyGL_Materialfv, METH_VARARGS, "" },
+    { "Materiali",  PyGL_Materiali,  METH_VARARGS, "" },
+    { "Materialf",  PyGL_Materialf,  METH_VARARGS, "" },
+    { "Materialiv", PyGL_Materialiv, METH_VARARGS, "" },
+    { "Materialfv", PyGL_Materialfv, METH_VARARGS, "" },
 // texture functions
-	{ "GenTextures",    PyGL_GenTextures,    METH_O,       "" },
-	{ "DeleteTextures", PyGL_DeleteTextures, METH_O,       "" },
-	{ "ISTexture",      PyGL_IsTexture,      METH_O,       "" },
-	{ "BindTexture",    PyGL_BindTexture,    METH_VARARGS, "" },
-	{ "TexCoord2i",     PyGL_TexCoord2i,     METH_VARARGS, "" },
-	{ "TexImage2D",     PyGL_TexImage2D,     METH_VARARGS, "" },
-	{ "TexSubImage2D",  PyGL_TexSubImage2D,  METH_VARARGS, "" },
-	{ "TexParameterf",  PyGL_TexParameterf,  METH_VARARGS, "" },
-	{ "TexParameteri",  PyGL_TexParameteri,  METH_VARARGS, "" },
+    { "GenTextures",    PyGL_GenTextures,    METH_O,       "" },
+    { "DeleteTextures", PyGL_DeleteTextures, METH_O,       "" },
+    { "ISTexture",      PyGL_IsTexture,      METH_O,       "" },
+    { "BindTexture",    PyGL_BindTexture,    METH_VARARGS, "" },
+    { "TexCoord2i",     PyGL_TexCoord2i,     METH_VARARGS, "" },
+    { "TexImage2D",     PyGL_TexImage2D,     METH_VARARGS, "" },
+    { "TexSubImage2D",  PyGL_TexSubImage2D,  METH_VARARGS, "" },
+    { "TexParameterf",  PyGL_TexParameterf,  METH_VARARGS, "" },
+    { "TexParameteri",  PyGL_TexParameteri,  METH_VARARGS, "" },
 // raster functions
-	{ "RasterPos2i", PyGL_RasterPos2i, METH_VARARGS, "" },
-	{ "WindowPos2i", PyGL_WindowPos2i, METH_VARARGS, "" },
-	{ "WindowPos3i", PyGL_WindowPos3i, METH_VARARGS, "" },
-	{ "PixelZoom",   PyGL_PixelZoom,   METH_VARARGS, "" },
-	{ "PixelStorei", PyGL_PixelStorei, METH_VARARGS, "" },
-	{ "DrawPixels",  PyGL_DrawPixels,  METH_VARARGS, "" },
-	{ "CopyPixels",  PyGL_CopyPixels,  METH_VARARGS, "" },
-	{ "ReadPixels",  PyGL_ReadPixels,  METH_VARARGS, "" },
+    { "RasterPos2i", PyGL_RasterPos2i, METH_VARARGS, "" },
+    { "WindowPos2i", PyGL_WindowPos2i, METH_VARARGS, "" },
+    { "WindowPos3i", PyGL_WindowPos3i, METH_VARARGS, "" },
+    { "PixelZoom",   PyGL_PixelZoom,   METH_VARARGS, "" },
+    { "PixelStorei", PyGL_PixelStorei, METH_VARARGS, "" },
+    { "DrawPixels",  PyGL_DrawPixels,  METH_VARARGS, "" },
+    { "CopyPixels",  PyGL_CopyPixels,  METH_VARARGS, "" },
+    { "ReadPixels",  PyGL_ReadPixels,  METH_VARARGS, "" },
 
-	{ "WindowPos2i", PyGL_WindowPos2i, METH_VARARGS, "" },
+    { "WindowPos2i", PyGL_WindowPos2i, METH_VARARGS, "" },
 // frame buffer object
-	{ "GenFramebuffers",         PyGL_GenFramebuffers,         METH_O,       "" },
-	{ "DeleteFramebuffers",      PyGL_DeleteFramebuffers,      METH_O,       "" },
-	{ "BindFramebuffer",         PyGL_BindFramebuffer,         METH_O,       "" },
-	{ "FramebufferRenderbuffer", PyGL_FramebufferRenderbuffer, METH_VARARGS, "" },
+    { "GenFramebuffers",         PyGL_GenFramebuffers,         METH_O,       "" },
+    { "DeleteFramebuffers",      PyGL_DeleteFramebuffers,      METH_O,       "" },
+    { "BindFramebuffer",         PyGL_BindFramebuffer,         METH_O,       "" },
+    { "FramebufferRenderbuffer", PyGL_FramebufferRenderbuffer, METH_VARARGS, "" },
 // render buffer object
-	{ "GenRenderbuffers",    PyGL_GenRenderbuffers,    METH_O,       "" },
-	{ "DeleteRenderbuffers", PyGL_DeleteRenderbuffers, METH_O,       "" },
-	{ "BindRenderbuffer",    PyGL_BindRenderbuffer,    METH_O,       "" },
-	{ "RenderbufferStorage", PyGL_RenderbufferStorage, METH_VARARGS, "" },
+    { "GenRenderbuffers",    PyGL_GenRenderbuffers,    METH_O,       "" },
+    { "DeleteRenderbuffers", PyGL_DeleteRenderbuffers, METH_O,       "" },
+    { "BindRenderbuffer",    PyGL_BindRenderbuffer,    METH_O,       "" },
+    { "RenderbufferStorage", PyGL_RenderbufferStorage, METH_VARARGS, "" },
 // ???
-	{ "DepthFunc",      PyGL_DepthFunc,      METH_O,       "" },
+    { "DepthFunc",      PyGL_DepthFunc,      METH_O,       "" },
 
 // GLU
-	{ "uOrtho2D",     PyGLu_Ortho2D,     METH_VARARGS, "" },
-	{ "uPerspective", PyGLu_Perspective, METH_VARARGS, "" },
-	{ "uLookAt",      PyGLu_LookAt,      METH_VARARGS, "" },
-	{ NULL }
+    { "uOrtho2D",     PyGLu_Ortho2D,     METH_VARARGS, "" },
+    { "uPerspective", PyGLu_Perspective, METH_VARARGS, "" },
+    { "uLookAt",      PyGLu_LookAt,      METH_VARARGS, "" },
+    { NULL }
 };
 
 #endif // __PYGL_H__
