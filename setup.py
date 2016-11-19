@@ -8,7 +8,7 @@ import setuptools
 defines = []
 include_dirs = ['/usr/local/include']
 library_dirs = ['/usr/local/lib']
-libs = ['GL', 'GLU', 'GLEW']
+libs = ['GLEW']
 
 setuptools.setup(
     name             = 'GL',
@@ -26,7 +26,7 @@ setuptools.setup(
             define_macros = defines,
             include_dirs = include_dirs,
             library_dirs = library_dirs,
-            libraries = libs
+            libraries = libs,
             )
         ],
     classifiers = [
