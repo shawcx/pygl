@@ -17,7 +17,7 @@ void initgl(void) {
 #ifdef IS_PY3K
     mod = PyModule_Create(&pygl_module);
 #else
-    mod = Py_InitModule3("pygl", PyGL_methods, DOC_MOD);
+    mod = Py_InitModule3("GL", PyGL_methods, DOC_MOD);
 #endif
     if(NULL == mod) {
         RETURNNULL;
