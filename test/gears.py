@@ -38,15 +38,15 @@
 
 import sys
 import math
+import time
 
 import SDL2
 import pygl as GL
 
 
 class Gears:
-    def __init__(self):
+    def __init__(self, index=0):
         self.frames = 0
-        self.time0 = 0
         self.gear1 = None
         self.gear2 = None
         self.gear3 = None
@@ -55,67 +55,35 @@ class Gears:
         self.view_rotz = 0.0
         self.angle = 0.0
 
-        SDL2.Init(SDL2.INIT_VIDEO)
+        x,y,w,h = SDL2.GetDisplayBounds(index)
+        self.window = SDL2.Window(
+            "Gears %d" % index,
+            size=(w,h),
+            position=(x,y),
+            flags=SDL2.WINDOW_FULLSCREEN | SDL2.WINDOW_OPENGL
+            )
 
-        size = (300,300)
-        pos  = (SDL2.WINDOWPOS_CENTERED, SDL2.WINDOWPOS_CENTERED)
-        self.window = SDL2.Window("Gears", size, pos, SDL2.WINDOW_OPENGL | SDL2.WINDOW_RESIZABLE)
+        #x,y,w,h = (SDL2.WINDOWPOS_CENTERED, SDL2.WINDOWPOS_CENTERED,300,300)
+        #self.window = SDL2.Window("Gears", size=(w,h), position=(x,y), flags=SDL2.WINDOW_OPENGL|SDL2.WINDOW_RESIZABLE)
+
         if not self.window:
-            print("Couldn't set 300x300 GL video mode: %s\n", SDL2.GetError())
+            print("Couldn't set %dx%d GL video mode: %s\n", w,h, SDL2.GetError())
             SDL2.Quit()
             sys.exit(2)
 
-        self.window.GL_CreateContext()
-
         self.init()
-        self.reshape(300, 300)
+        self.reshape(w, h)
 
-        done = False
-        while not done:
-            self.angle += 2.0
-
-            while True:
-                event = SDL2.PollEvent()
-                if not event:
-                    break
-
-                event,data = event
-
-                if event == SDL2.QUIT:
-                    done = True
-                    break
-
-                if event == SDL2.WINDOWEVENT:
-                    if data[0] == SDL2.WINDOWEVENT_SIZE_CHANGED:
-                        self.reshape(data[1],data[2])
-
-            keys = SDL2.GetKeyboardState()
-            if keys[SDL2.SCANCODE_ESCAPE]:
-                done = True
-            if keys[SDL2.SCANCODE_UP]:
-                self.view_rotx += 5.0
-            if keys[SDL2.SCANCODE_DOWN]:
-                self.view_rotx -= 5.0
-            if keys[SDL2.SCANCODE_LEFT]:
-                self.view_roty += 5.0
-            if keys[SDL2.SCANCODE_RIGHT]:
-                self.view_roty -= 5.0
-            if keys[SDL2.SCANCODE_Z]:
-                if SDL2.GetModState() & SDL2.KMOD_SHIFT:
-                    self.view_rotz -= 5.0
-                else:
-                    self.view_rotz += 5.0
-
-            self.draw()
-
-        del self.window
-        SDL2.Quit()
+        self.time0 = 0
 
     def init(self):
         pos = [5.0, 5.0, 10.0, 0.0]
         red = [0.8, 0.1, 0.0, 1.0]
         green = [0.0, 0.8, 0.2, 1.0]
         blue = [0.2, 0.2, 1.0, 1.0]
+
+        self.window.GL_CreateContext()
+        self.window.GL_MakeCurrent()
 
         GL.Lightfv(GL.LIGHT0, GL.POSITION, pos)
         GL.Enable(GL.CULL_FACE)
@@ -144,16 +112,11 @@ class Gears:
 
         GL.Enable(GL.NORMALIZE)
 
-        if len(sys.argv) > 1 and sys.argv[1] == "-info":
-            print("GL_RENDERER   =", GL.GetString(GL.RENDERER))
-            print("GL_VERSION    =", GL.GetString(GL.VERSION))
-            print("GL_VENDOR     =", GL.GetString(GL.VENDOR))
-            print("GL_EXTENSIONS =", GL.GetString(GL.EXTENSIONS))
-
     # new window size or exposure
     def reshape(self, width, height):
         h = float(height) / float(width)
 
+        self.window.GL_MakeCurrent()
         GL.Viewport(0, 0, width, height)
         GL.MatrixMode(GL.PROJECTION)
         GL.LoadIdentity()
@@ -163,6 +126,8 @@ class Gears:
         GL.Translatef(0.0, 0.0, -40.0)
 
     def draw(self):
+        self.window.GL_MakeCurrent()
+
         GL.Clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT)
 
         GL.PushMatrix()
@@ -303,8 +268,77 @@ def gear(inner_radius, outer_radius, width, teeth, tooth_depth):
         GL.Vertex3f(r0 * math.cos(angle), r0 * math.sin(angle), width * 0.5)
     GL.End()
 
-if '__main__' == __name__:
+
+def main():
+    gears = []
+
+    SDL2.Init(SDL2.INIT_VIDEO)
+    numOfDisplays = SDL2.GetNumVideoDisplays()
+    numOfDisplays = 3
+    for i in range(numOfDisplays):
+        gear = Gears(i)
+        gears.append(gear)
+
+    if len(sys.argv) > 1 and sys.argv[1] == "-info":
+        print("GL_RENDERER   =", GL.GetString(GL.RENDERER))
+        print("GL_VERSION    =", GL.GetString(GL.VERSION))
+        print("GL_VENDOR     =", GL.GetString(GL.VENDOR))
+        print("GL_EXTENSIONS =", GL.GetString(GL.EXTENSIONS))
+
     try:
-        Gears()
+        done = False
+        while not done:
+            for gear in gears:
+                gear.angle += 2.0
+
+            while True:
+                event = SDL2.PollEvent()
+                if not event:
+                    break
+
+                event,data = event
+
+                if event == SDL2.QUIT:
+                    done = True
+                    break
+
+                if event == SDL2.WINDOWEVENT:
+                    if data[0] == SDL2.WINDOWEVENT_SIZE_CHANGED:
+                        for gear in gears:
+                            if gear.window.GetWindowID() == data[3]:
+                                gear.reshape(data[1],data[2])
+
+            keys = SDL2.GetKeyboardState()
+            if keys[SDL2.SCANCODE_ESCAPE]:
+                done = True
+            if keys[SDL2.SCANCODE_UP]:
+                for gear in gears:
+                    gear.view_rotx += 5.0
+            if keys[SDL2.SCANCODE_DOWN]:
+                for gear in gears:
+                    gear.view_rotx -= 5.0
+            if keys[SDL2.SCANCODE_LEFT]:
+                for gear in gears:
+                    gear.view_roty += 5.0
+            if keys[SDL2.SCANCODE_RIGHT]:
+                for gear in gears:
+                    gear.view_roty -= 5.0
+            if keys[SDL2.SCANCODE_Z]:
+                if SDL2.GetModState() & SDL2.KMOD_SHIFT:
+                    for gear in gears:
+                        gear.view_rotz -= 5.0
+                else:
+                    for gear in gears:
+                        gear.view_rotz += 5.0
+
+            for gear in gears:
+                gear.draw()
+
+        for gear in gears:
+            del gear.window
+        SDL2.Quit()
     except KeyboardInterrupt:
         pass
+
+if '__main__' == __name__:
+    main()
