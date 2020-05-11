@@ -197,8 +197,7 @@ static PyObject * PyGL_ClearColor(PyObject *self, PyObject *pyoArgs) {
 	int ok;
 
 	ok = PyArg_ParseTuple(pyoArgs, "ffff", &r, &g, &b, &a);
-	if(!ok)
-	{
+	if(!ok) {
 		return NULL;
 	}
 
@@ -233,12 +232,10 @@ static PyObject * PyGL_NewList(PyObject *self, PyObject *pyoArgs) {
 
 	idx = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
 
-	if(2 == PyTuple_Size(pyoArgs))
-	{
+	if(2 == PyTuple_Size(pyoArgs)) {
 		mode = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
 	}
-	else
-	{
+	else {
 		mode = GL_COMPILE;
 	}
 
@@ -254,9 +251,7 @@ static PyObject * PyGL_EndList(PyObject *self, PyObject *pyo) {
 }
 
 static PyObject * PyGL_CallList(PyObject *self, PyObject *pyoList) {
-	GLuint idx;
-
-	idx = (GLuint)PyLong_AsUnsignedLong(pyoList);
+	GLuint idx = (GLuint)PyLong_AsUnsignedLong(pyoList);
 
 	glCallList(idx);
 
@@ -264,25 +259,19 @@ static PyObject * PyGL_CallList(PyObject *self, PyObject *pyoList) {
 }
 
 static PyObject * PyGL_IsList(PyObject *self, PyObject *pyoList) {
-	GLuint idx;
-	GLboolean isList;
+	GLuint idx = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoList, 0));
 
-	idx = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoList, 0));
-
-	isList = glIsList(idx);
-
-	if(isList)
+	if(glIsList(idx))
 		Py_RETURN_TRUE;
 	else
 		Py_RETURN_FALSE;
 }
 
 static PyObject * PyGL_DeleteLists(PyObject *self, PyObject *pyoArgs) {
-	GLuint idx;
+	GLuint  idx   = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
+	GLsizei range = (GLsizei)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
 
-	idx = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
-
-	glCallList(idx);
+	glDeleteLists(idx, range);
 
 	Py_RETURN_NONE;
 }
@@ -579,13 +568,11 @@ static PyObject * PyGL_Lightiv(PyObject *self, PyObject *pyoArgs) {
 	pyoList = PyTuple_GetItem(pyoArgs, 2);
 
 	size = PyList_Size(pyoList);
-	if(4 < size)
-	{
+	if(4 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(idx = 0; idx < size; ++idx) {
 		args[idx] = (GLint)PyLong_AsLong(PyList_GetItem(pyoList, idx));
 	}
 
@@ -607,13 +594,11 @@ static PyObject * PyGL_Lightfv(PyObject *self, PyObject *pyoArgs) {
 	pyoList = PyTuple_GetItem(pyoArgs, 2);
 
 	size = PyList_Size(pyoList);
-	if(4 < size)
-	{
+	if(4 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(idx = 0; idx < size; ++idx) {
 		args[idx] = (GLfloat)PyFloat_AsDouble(PyList_GetItem(pyoList, idx));
 	}
 
@@ -647,13 +632,11 @@ static PyObject * PyGL_Materialiv(PyObject *self, PyObject *pyoArgs) {
 	pyoList = PyTuple_GetItem(pyoArgs, 2);
 
 	size = PyList_Size(pyoList);
-	if(4 < size)
-	{
+	if(4 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(idx = 0; idx < size; ++idx) {
 		args[idx] = (GLint)PyLong_AsLong(PyList_GetItem(pyoList, idx));
 	}
 
@@ -675,13 +658,11 @@ static PyObject * PyGL_Materialfv(PyObject *self, PyObject *pyoArgs) {
 	pyoList = PyTuple_GetItem(pyoArgs, 2);
 
 	size = PyList_Size(pyoList);
-	if(4 < size)
-	{
+	if(4 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(idx = 0; idx < size; ++idx) {
 		args[idx] = (GLfloat)PyFloat_AsDouble(PyList_GetItem(pyoList, idx));
 	}
 
@@ -701,16 +682,14 @@ static PyObject * PyGL_GenTextures(PyObject *self, PyObject *pyoNum) {
 	int idx;
 
 	nSize = PyLong_AsLong(pyoNum);
-	if(0 >= nSize || 512 < nSize)
-	{
+	if(0 >= nSize || 512 < nSize) {
 		return NULL;
 	}
 
 	glGenTextures(nSize, textures);
 
 	pyoList = PyList_New(nSize);
-	for(idx = 0; idx < nSize; ++idx)
-	{
+	for(idx = 0; idx < nSize; ++idx) {
 		PyList_SetItem(pyoList, idx, PyLong_FromLong(textures[idx]));
 	}
 
@@ -723,13 +702,11 @@ static PyObject * PyGL_DeleteTextures(PyObject *self, PyObject *pyoList) {
 	int idx;
 
 	size = PyList_Size(pyoList);
-	if(512 < size)
-	{
+	if(512 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(idx = 0; idx < size; ++idx) {
 		textures[idx] = PyLong_AsLong(PyList_GetItem(pyoList, idx));
 	}
 
@@ -753,11 +730,8 @@ static PyObject * PyGL_IsTexture(PyObject *self, PyObject *pyoTexture) {
 }
 
 static PyObject * PyGL_BindTexture(PyObject *self, PyObject *pyoArgs) {
-	GLenum target;
-	GLuint texture;
-
-	target  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
-	texture = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
+	GLenum target  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
+	GLuint texture = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
 
 	glBindTexture(target, texture);
 
@@ -765,10 +739,8 @@ static PyObject * PyGL_BindTexture(PyObject *self, PyObject *pyoArgs) {
 }
 
 static PyObject * PyGL_TexCoord2i(PyObject *self, PyObject *pyoArgs) {
-	GLint s,t;
-
-	s = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	t = (GLuint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLint s = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint t = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
 
 	glTexCoord2i(s, t);
 
@@ -778,12 +750,10 @@ static PyObject * PyGL_TexCoord2i(PyObject *self, PyObject *pyoArgs) {
 static PyObject * PyGL_TexImage2D(PyObject *self, PyObject *pyoArgs) {
 	int target, level, intfmt, w, h, border, fmt, type, size;
 	unsigned char *pixels;
-
 	int ok;
 
 	ok = PyArg_ParseTuple(pyoArgs, "iiiiiiiis#", &target, &level, &intfmt, &w, &h, &border, &fmt, &type, &pixels, &size);
-	if(!ok)
-	{
+	if(!ok) {
 		return NULL;
 	}
 
@@ -793,24 +763,16 @@ static PyObject * PyGL_TexImage2D(PyObject *self, PyObject *pyoArgs) {
 }
 
 static PyObject * PyGL_TexSubImage2D(PyObject *self, PyObject *pyoArgs) {
-	GLenum target;
-	GLint level;
-	GLint x, y;
-	GLsizei w, h;
-	GLenum fmt, type;
+	GLenum  target = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint   level  = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLint   x      = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
+	GLint   y      = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
+	GLsizei w      = (GLsizei)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
+	GLsizei h      = (GLsizei)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 5));
+	GLenum  fmt    = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 6));
+	GLenum  type   = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 7));
 
-	unsigned char *pixels;
-
-	target = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
-	fmt    = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 6));
-	type   = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 7));
-	level = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
-	w = (GLsizei)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
-	h = (GLsizei)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 5));
-
-	pixels = (unsigned char *)PyBytes_AsString(PyTuple_GetItem(pyoArgs, 8));
+	unsigned char * pixels = (unsigned char *)PyBytes_AsString(PyTuple_GetItem(pyoArgs, 8));
 
 	glTexSubImage2D(target, level, x, y, w, h, fmt, type, pixels);
 
@@ -823,8 +785,7 @@ static PyObject * PyGL_TexParameterf(PyObject *self, PyObject *pyoArgs) {
 	int ok;
 
 	ok = PyArg_ParseTuple(pyoArgs, "iif", &target, &name, &param);
-	if(!ok)
-	{
+	if(!ok) {
 		return NULL;
 	}
 
@@ -838,8 +799,7 @@ static PyObject * PyGL_TexParameteri(PyObject *self, PyObject *pyoArgs) {
 	int ok;
 
 	ok = PyArg_ParseTuple(pyoArgs, "iii", &target, &name, &param);
-	if(!ok)
-	{
+	if(!ok) {
 		return NULL;
 	}
 
@@ -853,117 +813,77 @@ static PyObject * PyGL_TexParameteri(PyObject *self, PyObject *pyoArgs) {
 // ****************************************************************************
 
 static PyObject * PyGL_RasterPos2i(PyObject *self, PyObject *pyoArgs) {
-	GLint x,y;
-
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-
+	GLint x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
 	glRasterPos2i(x, y);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_WindowPos2i(PyObject *self, PyObject *pyoArgs) {
-	GLint x,y;
-
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-
+	GLint x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
 	glWindowPos2i(x, y);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_WindowPos3i(PyObject *self, PyObject *pyoArgs) {
-	GLint x,y,z;
-
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	z = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
-
+	GLint x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLint z = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
 	glWindowPos3i(x, y, z);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_PixelZoom(PyObject *self, PyObject *pyoArgs) {
-	GLfloat x,y;
-
-	x = (GLfloat)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLfloat)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
-
+	GLfloat x = (GLfloat)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
+	GLfloat y = (GLfloat)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
 	glPixelZoom(x, y);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_PixelStorei(PyObject *self, PyObject *pyoArgs) {
-	GLenum name;
-	GLint param;
-
-	name = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
-	param = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-
+	GLenum name  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint  param = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
 	glPixelStorei(name, param);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_DrawPixels(PyObject *self, PyObject *pyoArgs) {
-	GLsizei w,h;
-	GLenum fmt,type;
-	char *pixels;
-
-	w = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	h = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	fmt  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 2));
-	type = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 3));
-	pixels = PyBytes_AS_STRING(PyTuple_GetItem(pyoArgs, 4));
-
+	GLsizei w      = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLsizei h      = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLenum  fmt    = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 2));
+	GLenum  type   = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 3));
+	char *  pixels = PyBytes_AS_STRING(PyTuple_GetItem(pyoArgs, 4));
 	glDrawPixels(w, h, fmt, type, pixels);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_CopyPixels(PyObject *self, PyObject *pyoArgs) {
-	GLint x,y;
-	GLsizei w,h;
-	GLenum type;
-
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	w = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
-	h = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
-	type = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
-
+	GLint   x    = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint   y    = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLsizei w    = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
+	GLsizei h    = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
+	GLenum  type = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
 	glCopyPixels(x, y, w, h, type);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_ReadPixels(PyObject *self, PyObject *pyoArgs) {
-	PyObject *pyoPixels;
-	char *pixels;
+	GLint   x    = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLint   y    = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLsizei w    = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
+	GLsizei h    = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
+	GLenum  fmt  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
+	GLenum  type = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 5));
+
 	size_t len;
-
-	GLint x,y;
-	GLsizei w,h;
-	GLenum fmt,type;
-
-	x = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	y = (GLint)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	w = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
-	h = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 3));
-	fmt  = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 4));
-	type = (GLenum)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 5));
-
 	if(GL_RGBA == fmt)
 		len = w * h * 4;
 	else
 		len = w * h * 3;
 
-	pyoPixels = PyBytes_FromStringAndSize(NULL, len);
-	pixels = PyBytes_AS_STRING(pyoPixels);
+	PyObject *pyoPixels = PyBytes_FromStringAndSize(NULL, len);
+	char *pixels = PyBytes_AS_STRING(pyoPixels);
 
 	glReadPixels(x, y, w, h, fmt, type, pixels);
 
@@ -975,20 +895,17 @@ static PyObject * PyGL_ReadPixels(PyObject *self, PyObject *pyoArgs) {
 // ****************************************************************************
 
 static PyObject * PyGL_GenFramebuffers(PyObject *self, PyObject *pyoNum) {
-	PyObject *pyoList;
 	GLuint fbos[64];
-	int nSize;
-	int idx;
 
-	nSize = PyLong_AsLong(pyoNum);
+	int nSize = PyLong_AsLong(pyoNum);
 	if(0 >= nSize || 64 < nSize) {
 		return NULL;
 	}
 
 	glGenFramebuffers(nSize, fbos);
 
-	pyoList = PyList_New(nSize);
-	for(idx = 0; idx < nSize; ++idx) {
+	PyObject *pyoList = PyList_New(nSize);
+	for(int idx = 0; idx < nSize; ++idx) {
 		PyList_SetItem(pyoList, idx, PyLong_FromLong(fbos[idx]));
 	}
 
@@ -997,17 +914,13 @@ static PyObject * PyGL_GenFramebuffers(PyObject *self, PyObject *pyoNum) {
 
 static PyObject * PyGL_DeleteFramebuffers(PyObject *self, PyObject *pyoList) {
 	GLuint fbos[64];
-	Py_ssize_t size;
-	int idx;
 
-	size = PyList_Size(pyoList);
-	if(64 < size)
-	{
+	Py_ssize_t size = PyList_Size(pyoList);
+	if(64 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx)
-	{
+	for(int idx = 0; idx < size; ++idx) {
 		fbos[idx] = PyLong_AsLong(PyList_GetItem(pyoList, idx));
 	}
 
@@ -1017,24 +930,15 @@ static PyObject * PyGL_DeleteFramebuffers(PyObject *self, PyObject *pyoList) {
 }
 
 static PyObject * PyGL_BindFramebuffer(PyObject *self, PyObject *pyoNum) {
-	GLuint fbo;
-
-	fbo = (GLuint)PyLong_AsUnsignedLong(pyoNum);
-
+	GLuint fbo = (GLuint)PyLong_AsUnsignedLong(pyoNum);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_FramebufferRenderbuffer(PyObject *self, PyObject *pyoArgs) {
-	GLenum attachment;
-	GLuint rbo;
-
-	attachment = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	rbo = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
-
+	GLenum attachment = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLuint rbo        = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rbo);
-
 	Py_RETURN_NONE;
 }
 
@@ -1043,20 +947,17 @@ static PyObject * PyGL_FramebufferRenderbuffer(PyObject *self, PyObject *pyoArgs
 // ****************************************************************************
 
 static PyObject * PyGL_GenRenderbuffers(PyObject *self, PyObject *pyoNum) {
-	PyObject *pyRenderBuffers;
 	GLuint rbos[64];
-	int nSize;
-	int idx;
 
-	nSize = PyLong_AsLong(pyoNum);
+	int nSize = PyLong_AsLong(pyoNum);
 	if(0 >= nSize || 64 < nSize) {
 		return NULL;
 	}
 
 	glGenRenderbuffers(nSize, rbos);
 
-	pyRenderBuffers = PyList_New(nSize);
-	for(idx = 0; idx < nSize; ++idx) {
+	PyObject *pyRenderBuffers = PyList_New(nSize);
+	for(int idx = 0; idx < nSize; ++idx) {
 		PyList_SetItem(pyRenderBuffers, idx, PyLong_FromLong(rbos[idx]));
 	}
 
@@ -1065,15 +966,13 @@ static PyObject * PyGL_GenRenderbuffers(PyObject *self, PyObject *pyoNum) {
 
 static PyObject * PyGL_DeleteRenderbuffers(PyObject *self, PyObject *pyoList) {
 	GLuint rbos[64];
-	Py_ssize_t size;
-	int idx;
 
-	size = PyList_Size(pyoList);
+	Py_ssize_t size = PyList_Size(pyoList);
 	if(64 < size) {
 		return NULL;
 	}
 
-	for(idx = 0; idx < size; ++idx) {
+	for(int idx = 0; idx < size; ++idx) {
 		rbos[idx] = PyLong_AsLong(PyList_GetItem(pyoList, idx));
 	}
 
@@ -1083,25 +982,16 @@ static PyObject * PyGL_DeleteRenderbuffers(PyObject *self, PyObject *pyoList) {
 }
 
 static PyObject * PyGL_BindRenderbuffer(PyObject *self, PyObject *pyoNum) {
-	GLuint rbo;
-
-	rbo = (GLuint)PyLong_AsUnsignedLong(pyoNum);
-
+	GLuint rbo = (GLuint)PyLong_AsUnsignedLong(pyoNum);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject * PyGL_RenderbufferStorage(PyObject *self, PyObject *pyoArgs) {
-	GLenum fmt;
-	GLsizei w,h;
-
-	fmt = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
-	w = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
-	h = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
-
+	GLenum  fmt = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+	GLsizei w   = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 1));
+	GLsizei h   = (GLsizei)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 2));
 	glRenderbufferStorage(GL_RENDERBUFFER, fmt, w, h);
-
 	Py_RETURN_NONE;
 }
 
@@ -1110,7 +1000,6 @@ static PyObject * PyGL_RenderbufferStorage(PyObject *self, PyObject *pyoArgs) {
 
 static PyObject * PyGL_DepthFunc(PyObject *self, PyObject *pyoFunc) {
 	glDepthFunc(PyLong_AsLong(pyoFunc));
-
 	Py_RETURN_NONE;
 }
 
@@ -1119,48 +1008,34 @@ static PyObject * PyGL_DepthFunc(PyObject *self, PyObject *pyoFunc) {
 // ****************************************************************************
 
 static PyObject *PyGLu_Ortho2D(PyObject *self, PyObject *pyoArgs) {
-	GLdouble l,r,b,t;
-
-	l = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
-	r = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
-	b = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
-	t = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
-
+	GLdouble l = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
+	GLdouble r = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
+	GLdouble b = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
+	GLdouble t = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
 	gluOrtho2D(l, r, b, t);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject *PyGLu_Perspective(PyObject *self, PyObject *pyoArgs) {
-	GLdouble v,a,n,f;
-
-	v = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
-	a = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
-	n = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
-	f = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
-
+	GLdouble v = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
+	GLdouble a = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
+	GLdouble n = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
+	GLdouble f = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
 	gluPerspective(v, a, n, f);
-
 	Py_RETURN_NONE;
 }
 
 static PyObject *PyGLu_LookAt(PyObject *self, PyObject *pyoArgs) {
-	GLdouble ex,ey,ez;
-	GLdouble cx,cy,cz;
-	GLdouble ux,uy,uz;
-
-	ex = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
-	ey = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
-	ez = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
-	cx = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
-	cy = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 4));
-	cz = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 5));
-	ux = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 6));
-	uy = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 7));
-	uz = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 8));
-
+	GLdouble ex = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 0));
+	GLdouble ey = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 1));
+	GLdouble ez = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 2));
+	GLdouble cx = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 3));
+	GLdouble cy = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 4));
+	GLdouble cz = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 5));
+	GLdouble ux = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 6));
+	GLdouble uy = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 7));
+	GLdouble uz = (GLdouble)PyFloat_AsDouble(PyTuple_GetItem(pyoArgs, 8));
 	gluLookAt(ex, ey, ez, cx, cy, cz, ux, uy, uz);
-
 	Py_RETURN_NONE;
 }
 
