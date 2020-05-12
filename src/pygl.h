@@ -36,6 +36,8 @@ static PyObject * PyGL_BlendFunc ( PyObject * self, PyObject * pyoArgs );
 
 static PyObject * PyGL_GetString ( PyObject * self, PyObject * pyoArgs );
 
+static PyObject * PyGL_GetIntegerv ( PyObject * self, PyObject * pyoArgs );
+
 // ****************************************************************************
 // matrix functions
 // ****************************************************************************
@@ -206,6 +208,9 @@ static PyObject * PyGL_RenderbufferStorage ( PyObject * self, PyObject * pyoArgs
 
 static PyObject * PyGL_DepthFunc      ( PyObject * self, PyObject * pyoFunc  );
 
+static PyObject * PyGL_DepthMask      ( PyObject * self, PyObject * pyoFunc  );
+static PyObject * PyGL_BindBuffer     ( PyObject * self, PyObject * pyoFunc  );
+
 // ****************************************************************************
 // GLU functions
 // ****************************************************************************
@@ -225,6 +230,9 @@ static PyMethodDef PyGL_methods[] = {
     { "BlendFunc", PyGL_BlendFunc, METH_VARARGS,
     "BlendFunc(srcfactor, destfactor)" },
     { "GetString", PyGL_GetString, METH_O,       "" },
+
+//
+    { "GetIntegerv", PyGL_GetIntegerv, METH_O, "" },
 
 // matrix functions
     { "PushMatrix",   PyGL_PushMatrix,   METH_NOARGS,  "" },
@@ -330,6 +338,9 @@ static PyMethodDef PyGL_methods[] = {
     { "RenderbufferStorage", PyGL_RenderbufferStorage, METH_VARARGS, "" },
 // ???
     { "DepthFunc",      PyGL_DepthFunc,      METH_O,       "" },
+
+    { "DepthMask",      PyGL_DepthMask,      METH_O,       "" },
+    { "BindBuffer",     PyGL_BindBuffer,     METH_VARARGS, "" },
 
 // GLU
     { "uOrtho2D",     PyGLu_Ortho2D,     METH_VARARGS, "" },

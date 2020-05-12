@@ -89,6 +89,24 @@ static PyObject * PyGL_GetString(PyObject *self, PyObject *pyoName) {
     }
 }
 
+
+// TODO: support size parameter?
+static PyObject * PyGL_GetIntegerv ( PyObject * self, PyObject * pyoName ) {
+    GLint  value[4] = {0,0,0,0};
+
+    GLenum name = (GLenum)PyLong_AsUnsignedLong(pyoName);
+    glGetIntegerv(name, &value);
+
+    PyObject *values = PyList_New(4);
+    for(int idx = 0; idx < 4; ++idx) {
+        PyList_SetItem(values, idx, PyLong_FromLong(value[idx]));
+    }
+
+    return values;
+}
+
+
+
 // ****************************************************************************
 // matrix functions
 // ****************************************************************************
@@ -1003,6 +1021,24 @@ static PyObject * PyGL_DepthFunc(PyObject *self, PyObject *pyoFunc) {
     Py_RETURN_NONE;
 }
 
+
+// ****************************************************************************
+
+static PyObject * PyGL_DepthMask(PyObject *self, PyObject *pyoBool) {
+    glDepthMask(PyLong_AsLong(pyoBool));
+    Py_RETURN_NONE;
+}
+
+
+static PyObject * PyGL_BindBuffer(PyObject *self, PyObject *pyoArgs) {
+    GLenum target = (GLenum)PyLong_AsLong(PyTuple_GetItem(pyoArgs, 0));
+    GLuint buffer = (GLuint)PyLong_AsUnsignedLong(PyTuple_GetItem(pyoArgs, 1));
+    glBindBuffer(target, buffer);
+    Py_RETURN_NONE;
+}
+
+
+
 // ****************************************************************************
 // GLu functions
 // ****************************************************************************
@@ -1274,4 +1310,11 @@ void add_constants(PyObject *mod) {
     PyModule_AddIntConstant( mod, "STENCIL_ATTACHMENT",       GL_STENCIL_ATTACHMENT       );
     PyModule_AddIntConstant( mod, "DEPTH_STENCIL_ATTACHMENT", GL_DEPTH_STENCIL_ATTACHMENT );
 
+#ifdef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+    PyModule_AddIntConstant( mod, "MAX_TEXTURE_MAX_ANISOTROPY_EXT", GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT );
+#endif
+    PyModule_AddIntConstant( mod, "TEXTURE_CUBE_MAP_SEAMLESS", GL_TEXTURE_CUBE_MAP_SEAMLESS );
+
+    PyModule_AddIntConstant( mod, "ARRAY_BUFFER",         GL_ARRAY_BUFFER         );
+    PyModule_AddIntConstant( mod, "ELEMENT_ARRAY_BUFFER", GL_ELEMENT_ARRAY_BUFFER );
 }
