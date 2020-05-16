@@ -227,12 +227,11 @@ static PyMethodDef PyGL_methods[] = {
     { "Disable",   PyGL_Disable,   METH_O,       "" },
     { "IsEnabled", PyGL_IsEnabled, METH_O,       "" },
     { "Hint",      PyGL_Hint,      METH_VARARGS, "" },
-    { "BlendFunc", PyGL_BlendFunc, METH_VARARGS,
-    "BlendFunc(srcfactor, destfactor)" },
+    { "BlendFunc", PyGL_BlendFunc, METH_VARARGS, "BlendFunc(srcfactor, destfactor)" },
     { "GetString", PyGL_GetString, METH_O,       "" },
 
 //
-    { "GetIntegerv", PyGL_GetIntegerv, METH_O, "" },
+    { "GetIntegerv", PyGL_GetIntegerv, METH_VARARGS, "" },
 
 // matrix functions
     { "PushMatrix",   PyGL_PushMatrix,   METH_NOARGS,  "" },
@@ -348,5 +347,7 @@ static PyMethodDef PyGL_methods[] = {
     { "uLookAt",      PyGLu_LookAt,      METH_VARARGS, "" },
     { NULL }
 };
+
+#include "constants.c"
 
 #endif // __PYGL_H__
