@@ -44,12 +44,8 @@ import threading
 import SDL2
 import pygl as GL
 
-glLock = threading.Lock()
-
-class Gears(threading.Thread):
+class Gears:
     def __init__(self, index=0):
-        super(Gears, self).__init__(daemon = 1)
-
         self.index = index
         self.frames = 0
         self.gear1 = None
@@ -59,26 +55,15 @@ class Gears(threading.Thread):
         self.view_roty = 30.0
         self.view_rotz = 0.0
         self.angle = 0.0
-        self.stop = False
-        self.newShape = None
         self.isFullscreen = False
 
-    def run(self):
         x,y,w,h = SDL2.GetDisplayBounds(self.index)
-        #self.window = SDL2.Window(
-        #    "Gears %d" % index,
-        #    size=(w,h),
-        #    position=(x,y),
-        #    flags=SDL2.WINDOW_FULLSCREEN | SDL2.WINDOW_OPENGL
-        #    )
-
-        ww = 300
-        wh = 300
-
-        x = int(x + (w / 2) - (ww / 2))
-        y = int(y + (h / 2) - (wh / 2))
-
-        self.window = SDL2.Window("Gears", size=(ww,wh), position=(x,y), flags=SDL2.WINDOW_OPENGL|SDL2.WINDOW_RESIZABLE)
+        self.window = SDL2.Window(
+            "Gears %d" % (index+1),
+            size     = (w-200,h-200),
+            position = (x+100,y+100),
+            flags    = SDL2.WINDOW_OPENGL | SDL2.WINDOW_RESIZABLE
+            )
 
         if not self.window:
             print("Couldn't set %dx%d GL video mode: %s\n", w,h, SDL2.GetError())
@@ -86,31 +71,23 @@ class Gears(threading.Thread):
             sys.exit(2)
 
         self.init()
-        self.reshape(ww, wh)
+        self.reshape(w, h)
         self.time0 = 0
 
-        while not self.stop:
-            self.draw()
-            if self.newShape:
-                self.reshape(*self.newShape)
-                self.newShape = None
-
     def toggleFullscreen(self):
-        x,y,w,h = SDL2.GetDisplayBounds(self.index)
         if self.isFullscreen:
-            ww,wh = self.oldSize
-            x,y   = self.oldPosition
+            w,h = self.oldSize
+            x,y = self.oldPosition
             self.window.SetWindowFullscreen(0)
-            self.window.SetWindowSize((ww,wh))
+            self.window.SetWindowSize((w,h))
             self.window.SetWindowPosition((x,y))
-            self.newShape = (ww,wh)
             self.isFullscreen = False
         else:
             self.oldSize     = self.window.GetWindowSize()
             self.oldPosition = self.window.GetWindowPosition()
+            x,y,w,h = SDL2.GetDisplayBounds(self.index)
             self.window.SetWindowSize((w,h))
             self.window.SetWindowFullscreen(SDL2.WINDOW_FULLSCREEN_DESKTOP)
-            self.newShape = (w,h)
             self.isFullscreen = True
 
     def init(self):
@@ -118,8 +95,6 @@ class Gears(threading.Thread):
         red   = [0.8, 0.1, 0.0, 1.0]
         green = [0.0, 0.8, 0.2, 1.0]
         blue  = [0.2, 0.2, 1.0, 1.0]
-
-        glLock.acquire()
 
         self.window.GL_CreateContext()
         self.window.GL_MakeCurrent()
@@ -150,13 +125,9 @@ class Gears(threading.Thread):
         GL.EndList()
         GL.Enable(GL.NORMALIZE)
 
-        glLock.release()
-
     # new window size or exposure
     def reshape(self, width, height):
         h = float(height) / float(width)
-
-        glLock.acquire()
 
         self.window.GL_MakeCurrent()
         GL.Viewport(0, 0, width, height)
@@ -167,11 +138,7 @@ class Gears(threading.Thread):
         GL.LoadIdentity()
         GL.Translatef(0.0, 0.0, -40.0)
 
-        glLock.release()
-
     def draw(self):
-        glLock.acquire()
-
         self.window.GL_MakeCurrent()
 
         GL.Clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT)
@@ -200,8 +167,6 @@ class Gears(threading.Thread):
         GL.PopMatrix()
 
         GL.PopMatrix()
-
-        glLock.release()
 
         self.window.GL_SwapWindow()
 
@@ -322,22 +287,36 @@ def main():
 
     SDL2.Init(SDL2.INIT_VIDEO)
     numOfDisplays = SDL2.GetNumVideoDisplays()
-    #numOfDisplays = 2
     for i in range(numOfDisplays):
         gear = Gears(i)
         gears.append(gear)
-        gear.start()
 
     if len(sys.argv) > 1 and sys.argv[1] == "-info":
-        print("GL_RENDERER   =", GL.GetString(GL.RENDERER))
-        print("GL_VERSION    =", GL.GetString(GL.VERSION))
-        print("GL_VENDOR     =", GL.GetString(GL.VENDOR))
-        print("GL_EXTENSIONS =", GL.GetString(GL.EXTENSIONS))
+        print("VENDOR   =", GL.GetString(GL.VENDOR))
+        print("RENDERER =", GL.GetString(GL.RENDERER))
+        print("VERSION  =", GL.GetString(GL.VERSION))
+
+        extensions = GL.GetString(GL.EXTENSIONS)
+        extensions = extensions.split()
+        extensions.sort()
+        extensions = [e.split('_',2)[1:] for e in extensions]
+
+        current = None
+        for extension in extensions:
+            if extension[0] != current:
+                current = extension[0]
+                print()
+                print(current)
+                print('='*len(current))
+            print(extension[1])
 
     try:
         done = False
         t0 = 0
         while not done:
+            for gear in gears:
+                gear.angle += 2.0
+
             while True:
                 event = SDL2.PollEvent()
                 if not event:
@@ -353,20 +332,16 @@ def main():
                     if data[0] == SDL2.WINDOWEVENT_SIZE_CHANGED:
                         for gear in gears:
                             if gear.window.GetWindowID() == data[3]:
-                                gear.newShape = (data[1],data[2])
+                                gear.reshape(data[1],data[2])
                                 break
                     elif data[0] == SDL2.WINDOWEVENT_CLOSE:
                         for gear in gears:
                             if gear.window.GetWindowID() == data[3]:
-                                gear.stop = True
-                                gear.join()
-                                del gear.window
-                                gears.remove(gear)
-                                break
+                                gear.reshape(data[1],data[2])
                     #else:
                     #    print('window event:', data[0])
 
-            keys = SDL2.GetKeyboardState()
+            keys = SDL2.GetKeyState()
             if keys[SDL2.SCANCODE_ESCAPE]:
                 done = True
             if keys[SDL2.SCANCODE_UP]:
@@ -396,15 +371,13 @@ def main():
                         gear.view_rotz += 5.0
 
             for gear in gears:
-                gear.angle += 0.2
-
-            time.sleep(1.0 / 144)
+                gear.draw()
 
         for gear in gears:
-            gear.stop = True
-            gear.join()
             del gear.window
+
         SDL2.Quit()
+
     except KeyboardInterrupt:
         pass
 
