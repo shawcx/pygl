@@ -14,9 +14,9 @@ libs = ['GL', 'GLU', 'GLEW']
 setuptools.setup(
     name         = 'pygl',
     version      = '0.1.0',
-    author       = 'Matthew Oertle',
-    author_email = 'moertle@gmail.com',
-    url          = 'https://github.com/moertle/pygl',
+    author       = 'Matthew Shaw',
+    author_email = 'mshaw.cx@gmail.com',
+    url          = 'https://github.com/shawcx/pygl',
     license      = 'MIT',
     description  = 'Python bindings for OpenGL',
     long_description = open('README.rst').read(),

@@ -33,7 +33,7 @@
 
 #
 # Port of glxgears to test SDL2 / GL python bindings
-# By Matthew Oertle 2019
+# By Matthew Shaw 2019
 #
 
 import sys
