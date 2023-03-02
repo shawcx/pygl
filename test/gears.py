@@ -36,37 +36,39 @@
 # By Matthew Shaw 2019
 #
 
-import sys
+import collections
 import math
-import time
+import sys
 import threading
+import time
 
 import SDL2
 import pygl as GL
 
 class Gears:
     def __init__(self, index=0):
-        self.index = index
-        self.frames = 0
-        self.gear1 = None
-        self.gear2 = None
-        self.gear3 = None
-        self.view_rotx = 20.0
-        self.view_roty = 30.0
-        self.view_rotz = 0.0
-        self.angle = 0.0
+        self.index        = index
+        self.title        = f'Gears {index+1}'
+        self.frames       = 0
+        self.gear1        = None
+        self.gear2        = None
+        self.gear3        = None
+        self.view_rotx    = 20.0
+        self.view_roty    = 30.0
+        self.view_rotz    = 0.0
+        self.angle        = 0.0
         self.isFullscreen = False
 
         x,y,w,h = SDL2.GetDisplayBounds(self.index)
         self.window = SDL2.Window(
-            "Gears %d" % (index+1),
+            self.title,
             size     = (w-200,h-200),
             position = (x+100,y+100),
             flags    = SDL2.WINDOW_OPENGL | SDL2.WINDOW_RESIZABLE
             )
 
         if not self.window:
-            print("Couldn't set %dx%d GL video mode: %s\n", w,h, SDL2.GetError())
+            print(f'Could not set {w}x{h} GL video mode: {SDL2.GetError()}')
             SDL2.Quit()
             sys.exit(2)
 
@@ -123,6 +125,7 @@ class Gears:
         GL.Materialfv(GL.FRONT, GL.AMBIENT_AND_DIFFUSE, blue)
         gear(1.3, 2.0, 0.5, 10, 0.7)
         GL.EndList()
+
         GL.Enable(GL.NORMALIZE)
 
     # new window size or exposure
@@ -176,8 +179,8 @@ class Gears:
         if (t - self.time0) >= 5000:
             seconds = (t - self.time0) / 1000.0
             fps = self.frames / seconds
-            print("%d frames in %g seconds = %g FPS" % (self.frames,seconds,fps))
-            self.time0 = t
+            print(f'{self.title}: {self.frames} frames in {seconds:.2f} seconds = {fps:.2f} FPS')
+            self.time0  = t
             self.frames = 0
 
 
@@ -283,98 +286,89 @@ def gear(inner_radius, outer_radius, width, teeth, tooth_depth):
 
 
 def main():
-    gears = []
-
     SDL2.Init(SDL2.INIT_VIDEO)
     numOfDisplays = SDL2.GetNumVideoDisplays()
-    for i in range(numOfDisplays):
-        gear = Gears(i)
-        gears.append(gear)
+
+    windows = [Gears(i) for i in range(numOfDisplays)]
 
     if len(sys.argv) > 1 and sys.argv[1] == "-info":
-        print("VENDOR   =", GL.GetString(GL.VENDOR))
-        print("RENDERER =", GL.GetString(GL.RENDERER))
-        print("VERSION  =", GL.GetString(GL.VERSION))
+        print(f'VENDOR   = {GL.GetString(GL.VENDOR)}')
+        print(f'RENDERER = {GL.GetString(GL.RENDERER)}')
+        print(f'VERSION  = {GL.GetString(GL.VERSION)}')
+        print()
 
-        extensions = GL.GetString(GL.EXTENSIONS)
-        extensions = extensions.split()
+        extensions = GL.GetString(GL.EXTENSIONS).split()
         extensions.sort()
-        extensions = [e.split('_',2)[1:] for e in extensions]
 
-        current = None
-        for extension in extensions:
-            if extension[0] != current:
-                current = extension[0]
-                print()
-                print(current)
-                print('='*len(current))
-            print(extension[1])
+        info = collections.defaultdict(list)
+        for e in extensions:
+            e = e.split('_',2)[1:]
+            info[e[0]].append(e[1])
+
+        for vendor,extensions in info.items():
+            print(vendor)
+            print('=' * len(vendor))
+            for extension in extensions:
+                print(f'GL_{vendor}_{extension}')
+            print()
 
     try:
+        prevTick = 0
         done = False
-        t0 = 0
         while not done:
-            for gear in gears:
-                gear.angle += 2.0
+            keys = SDL2.GetKeyState()
+            if keys[SDL2.SCANCODE_ESCAPE]:
+                done = True
+            if keys[SDL2.SCANCODE_UP]:
+                for w in windows:
+                    w.view_rotx += 5.0
+            if keys[SDL2.SCANCODE_DOWN]:
+                for w in windows:
+                    w.view_rotx -= 5.0
+            if keys[SDL2.SCANCODE_LEFT]:
+                for w in windows:
+                    w.view_roty += 5.0
+            if keys[SDL2.SCANCODE_RIGHT]:
+                for w in windows:
+                    w.view_roty -= 5.0
+            if keys[SDL2.SCANCODE_Z]:
+                if SDL2.GetModState() & SDL2.KMOD_SHIFT:
+                    for gear in windows:
+                        gear.view_rotz -= 5.0
+                else:
+                    for w in windows:
+                        w.view_rotz += 5.0
+
+            delta = SDL2.GetTicks() - prevTick
+            prevTick += delta
+            for w in windows:
+                w.draw()
+                w.angle += delta / 10
 
             while True:
                 event = SDL2.PollEvent()
                 if not event:
                     break
-
                 event,data = event
 
                 if event == SDL2.QUIT:
                     done = True
                     break
-
-                if event == SDL2.WINDOWEVENT:
+                elif event == SDL2.WINDOWEVENT:
                     if data[0] == SDL2.WINDOWEVENT_SIZE_CHANGED:
-                        for gear in gears:
-                            if gear.window.GetWindowID() == data[3]:
-                                gear.reshape(data[1],data[2])
+                        for w in windows:
+                            if w.window.GetWindowID() == data[3]:
+                                w.reshape(data[1],data[2])
                                 break
                     elif data[0] == SDL2.WINDOWEVENT_CLOSE:
-                        for gear in gears:
-                            if gear.window.GetWindowID() == data[3]:
-                                gear.reshape(data[1],data[2])
-                    #else:
-                    #    print('window event:', data[0])
-
-            keys = SDL2.GetKeyState()
-            if keys[SDL2.SCANCODE_ESCAPE]:
-                done = True
-            if keys[SDL2.SCANCODE_UP]:
-                for gear in gears:
-                    gear.view_rotx += 5.0
-            if keys[SDL2.SCANCODE_DOWN]:
-                for gear in gears:
-                    gear.view_rotx -= 5.0
-            if keys[SDL2.SCANCODE_LEFT]:
-                for gear in gears:
-                    gear.view_roty += 5.0
-            if keys[SDL2.SCANCODE_RIGHT]:
-                for gear in gears:
-                    gear.view_roty -= 5.0
-            if keys[SDL2.SCANCODE_F]:
-                t1 = SDL2.GetTicks()
-                if t1 - t0 > 1000:
-                    t0 = t1
-                    for gear in gears:
-                        gear.toggleFullscreen()
-            if keys[SDL2.SCANCODE_Z]:
-                if SDL2.GetModState() & SDL2.KMOD_SHIFT:
-                    for gear in gears:
-                        gear.view_rotz -= 5.0
-                else:
-                    for gear in gears:
-                        gear.view_rotz += 5.0
-
-            for gear in gears:
-                gear.draw()
-
-        for gear in gears:
-            del gear.window
+                        for w in windows:
+                            if w.window.GetWindowID() == data[3]:
+                                del w.window
+                                windows.remove(w)
+                elif event == SDL2.KEYDOWN:
+                    if data[1] == SDL2.SCANCODE_F:
+                        for w in windows:
+                            w.toggleFullscreen()
 
         SDL2.Quit()
 
