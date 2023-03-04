@@ -316,34 +316,35 @@ def main():
         prevTick = 0
         done = False
         while not done:
+            delta = SDL2.GetTicks() - prevTick
+            prevTick += delta
+            delta = delta / 10
+            for w in windows:
+                w.draw()
+                w.angle += delta
+
             keys = SDL2.GetKeyState()
             if keys[SDL2.SCANCODE_ESCAPE]:
                 done = True
             if keys[SDL2.SCANCODE_UP]:
                 for w in windows:
-                    w.view_rotx += 5.0
+                    w.view_rotx += delta
             if keys[SDL2.SCANCODE_DOWN]:
                 for w in windows:
-                    w.view_rotx -= 5.0
+                    w.view_rotx -= delta
             if keys[SDL2.SCANCODE_LEFT]:
                 for w in windows:
-                    w.view_roty += 5.0
+                    w.view_roty += delta
             if keys[SDL2.SCANCODE_RIGHT]:
                 for w in windows:
-                    w.view_roty -= 5.0
+                    w.view_roty -= delta
             if keys[SDL2.SCANCODE_Z]:
                 if SDL2.GetModState() & SDL2.KMOD_SHIFT:
                     for gear in windows:
-                        gear.view_rotz -= 5.0
+                        gear.view_rotz -= delta
                 else:
                     for w in windows:
-                        w.view_rotz += 5.0
-
-            delta = SDL2.GetTicks() - prevTick
-            prevTick += delta
-            for w in windows:
-                w.draw()
-                w.angle += delta / 10
+                        w.view_rotz += delta
 
             while True:
                 event = SDL2.PollEvent()
