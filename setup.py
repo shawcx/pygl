@@ -6,8 +6,8 @@ import platform
 import setuptools
 
 defines = []
-include_dirs = ['/usr/local/include','/usr/include']
-library_dirs = ['/usr/local/lib','/usr/lib','/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries']
+include_dirs = ['/opt/homebrew/include', '/usr/local/include','/usr/include']
+library_dirs = ['/opt/homebrew/lib', '/usr/local/lib','/usr/lib','/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries']
 libs = ['GL', 'GLU', 'GLEW']
 
 
