@@ -1,4 +1,6 @@
 /build
 /dist
+/deb_dist
 /MANIFEST
-/pygl.egg-info
+/*.egg-info
+/*.tar.gz
