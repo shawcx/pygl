@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: regenerate and check for drift
+        run: |
+          python3 tools/generate.py
+          git diff --exit-code -- src/generated tools/manifest.json
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: system deps (linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglew-dev libglu1-mesa-dev libgl1-mesa-dev \
+                                  libsdl2-dev xvfb mesa-utils
+
+      - name: system deps (macos)
+        if: runner.os == 'macOS'
+        run: brew install glew sdl2
+
+      - name: python deps
+        run: |
+          python -m pip install --upgrade pip pytest
+          # SDL2 bindings are a separate project; the GL-context tests skip without them
+          python -m pip install "git+https://github.com/shawcx/sdl2" || true
+
+      - name: build
+        run: python setup.py build_ext --inplace
+
+      - name: coverage report
+        run: python tools/coverage.py --strict --enums
+
+      - name: test (linux, software GL)
+        if: runner.os == 'Linux'
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          GALLIUM_DRIVER: llvmpipe
+        run: xvfb-run -a python -m pytest test/ -v
+
+      - name: test (macos)
+        if: runner.os == 'macOS'
+        run: python -m pytest test/ -v
